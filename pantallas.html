@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uso Responsable de las Pantallas</title>
+
+    <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#f5f7fa;color:#333;line-height:1.7}
+header{background:#2E8B57;color:#fff;text-align:center;padding:30px 20px 40px}
+header h1{font-size:clamp(26px,5vw,40px)}
+header p{margin-top:15px;font-size:18px}
+.logo{width:100px;height:100px;object-fit:contain;background:#fff;border-radius:50%;padding:6px;margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+nav{background:#1d5f3b;padding:12px;text-align:center}
+nav a{color:#fff;text-decoration:none;margin:8px 14px;font-weight:bold;display:inline-block}
+nav a:hover,nav a:focus{color:#FFD700}
+main{width:min(90%,900px);margin:35px auto 0}
+section{background:#fff;padding:30px;margin-bottom:28px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,.1)}
+h2{color:#2E8B57;margin-bottom:15px}
+ul{margin-left:25px}
+.destacado,.frase{background:#E8F5E9;border-left:8px solid #2E8B57}
+.frase{font-style:italic}
+.alerta{background:#FFF4E5;border-left:8px solid #F28C28}
+.alerta h2{color:#c25e00}
+.boton,.btn{display:inline-block;margin-top:15px;background:#2E8B57;color:#fff;padding:12px 20px;text-decoration:none;border:0;border-radius:5px;cursor:pointer;font-size:16px}
+.boton:hover,.btn:hover{background:#1d5f3b}
+.btn.sec{background:#777}
+footer{background:#2E8B57;color:#fff;text-align:center;padding:20px;margin-top:40px}
+/* formulario */
+form{display:flex;flex-direction:column;gap:6px}
+form label{font-weight:bold;margin-top:10px}
+input[type=text],input[type=email],textarea{padding:10px;border:1px solid #bbb;border-radius:6px;font-size:16px;width:100%}
+/* juegos */
+.juego{background:#F0FAF4;border:2px dashed #2E8B57}
+.juego h2::before{content:"🎮 "}
+.opciones{display:grid;gap:10px;margin:12px 0}
+.opcion{padding:12px;border:2px solid #2E8B57;background:#fff;border-radius:8px;font-size:16px;cursor:pointer;text-align:left}
+.opcion:hover:not(:disabled){background:#E8F5E9}
+.opcion.ok{background:#2E8B57;color:#fff}
+.opcion.mal{background:#d9534f;border-color:#d9534f;color:#fff}
+.zona{min-height:56px;padding:10px;margin:10px 0;background:#fff;border:2px solid #cde5d6;border-radius:8px;display:flex;flex-wrap:wrap;gap:8px}
+.chip,.etiqueta{padding:8px 14px;border-radius:20px;background:#2E8B57;color:#fff;border:0;font-size:16px}
+.chip{cursor:pointer}
+.etiqueta{display:inline-block;margin:4px 6px 4px 0;background:#F28C28}
+.msg,.resultado{margin-top:10px;font-weight:bold;color:#1d5f3b}
+.resultado{font-size:18px}
+.cuento{background:#fff;padding:15px;border-radius:8px;margin-bottom:15px;font-style:italic}
+textarea{resize:vertical}
+input[type=range]{width:100%;margin:10px 0;accent-color:#2E8B57}
+.check{display:block;padding:6px 0;cursor:pointer}
+.check input{margin-right:10px;transform:scale(1.3)}
+.barra{height:16px;background:#ddd;border-radius:8px;overflow:hidden;margin-top:10px}
+#prog{height:100%;width:0;background:#2E8B57;transition:width .3s}
+@media(max-width:600px){section{padding:20px}}
+
+.juego{background:linear-gradient(135deg,#fff7d6,#ffe0f0 55%,#d9f2ff);border:0;border-radius:24px;box-shadow:0 6px 0 #2E8B57,0 12px 24px rgba(0,0,0,.15)}
+.juego h2{color:#d6336c;font-size:26px}
+.juego .btn{border-radius:30px;font-weight:bold;box-shadow:0 4px 0 #14472c}
+.juego .btn:active{transform:translateY(3px);box-shadow:none}
+.hud{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.pill{background:#fff;border-radius:20px;padding:6px 14px;font-weight:bold;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:480px;margin:15px auto}
+.carta{aspect-ratio:1;perspective:600px;border:0;background:none;cursor:pointer}
+.carta div{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.carta.v div{transform:rotateY(180deg)}
+.carta span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:14px;backface-visibility:hidden;text-align:center;font-weight:bold}
+.carta .f{background:linear-gradient(135deg,#ff6b9d,#ffb84d);color:#fff;font-size:34px;box-shadow:0 4px 0 #c2456f}
+.carta .b{background:#fff;transform:rotateY(180deg);border:3px solid #2E8B57;font-size:clamp(13px,3.4vw,19px)}
+.carta .b.em{font-size:clamp(28px,8vw,44px)}
+.carta.ok .b{background:#c9f7d8;animation:salta .5s}
+@keyframes salta{50%{transform:rotateY(180deg) scale(1.15)}}
+.gigante{font-size:90px;text-align:center;animation:flota 2s ease-in-out infinite}
+@keyframes flota{50%{transform:translateY(-10px)}}
+.slots,.burbujas,.dados{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:14px 0}
+.slot{width:46px;height:56px;border-bottom:5px solid #d6336c;background:#fff;border-radius:10px 10px 0 0;font-size:30px;font-weight:bold;text-align:center;line-height:56px;color:#2E8B57}
+.burb{width:60px;height:60px;border-radius:50%;border:0;color:#fff;font-size:26px;font-weight:bold;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.25);animation:flota 2.2s ease-in-out infinite}
+.burb:nth-child(even){animation-delay:.5s}
+.burb.gone{visibility:hidden}
+.burb.mal,.hoyo.mal{animation:tiembla .35s}
+@keyframes tiembla{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pop{animation:salta2 .4s}
+@keyframes salta2{50%{transform:scale(1.4)}}
+.dado{background:#fff;border:3px solid #F28C28;border-radius:16px;padding:14px 18px;font-size:22px;font-weight:bold;min-width:110px;text-align:center;box-shadow:0 4px 0 #c96f10}
+.hoyos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:380px;margin:15px auto}
+.hoyo{aspect-ratio:1;border-radius:50%;border:0;background:radial-gradient(#6b4423,#2b1a0c);font-size:clamp(30px,9vw,54px);cursor:pointer;box-shadow:inset 0 -6px 0 rgba(0,0,0,.4)}
+.hoyo.up{animation:sube .25s}
+@keyframes sube{from{transform:scale(.3)}to{transform:scale(1)}}
+.conf{position:fixed;top:-40px;font-size:28px;pointer-events:none;z-index:99;animation:cae 2s linear forwards}
+@keyframes cae{to{transform:translateY(110vh) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png" alt="Logo del proyecto" class="logo">
+
+<h1>Uso Responsable de las Pantallas</h1>
+
+<p>La tecnología es una herramienta útil cuando se utiliza con equilibrio y responsabilidad.</p>
+
+</header>
+
+<nav>
+
+<a href="index.html">Inicio</a>
+<a href="lectura.html">Lectura</a>
+<a href="escritura.html">Escritura</a>
+<a href="pantallas.html">Uso de Pantallas</a>
+<a href="contacto.html">Contacto</a>
+
+</nav>
+
+<main>
+
+<section>
+
+<h2>¿Qué son las pantallas?</h2>
+
+<p>
+
+Las pantallas están presentes en gran parte de nuestra vida diaria. Se encuentran en teléfonos celulares, computadoras, televisores, tabletas y videojuegos. Estas herramientas ofrecen múltiples beneficios para estudiar, trabajar y comunicarse, pero su uso excesivo puede afectar la salud física, emocional y el desarrollo cognitivo, especialmente durante la infancia.
+
+</p>
+
+</section>
+
+<section>
+
+<h2>Consecuencias del uso excesivo de pantallas</h2>
+
+<ul>
+
+<li>Disminución de la concentración y la atención.</li>
+
+<li>Reducción del interés por la lectura y la escritura.</li>
+
+<li>Problemas de sueño por la exposición prolongada a la luz de las pantallas.</li>
+
+<li>Menor interacción con la familia y los amigos.</li>
+
+<li>Sedentarismo y disminución de la actividad física.</li>
+
+<li>Dificultades para desarrollar habilidades sociales.</li>
+
+<li>Dependencia o uso compulsivo de dispositivos electrónicos.</li>
+
+</ul>
+
+</section>
+
+<section class="alerta">
+
+<h2>Pantallas en la primera infancia</h2>
+
+<p>
+
+Durante los primeros años de vida, el cerebro se encuentra en pleno desarrollo. En esta etapa es fundamental que los niños exploren el mundo mediante el juego, la lectura, la conversación y la interacción con otras personas. Un uso excesivo de dispositivos electrónicos puede limitar estas experiencias y afectar el desarrollo del lenguaje, la atención y el aprendizaje.
+
+</p>
+
+</section>
+
+<section>
+
+<h2>¿Cómo reducir el tiempo frente a las pantallas?</h2>
+
+<ul>
+
+<li>Establecer horarios para el uso de dispositivos.</li>
+
+<li>Evitar el uso de pantallas durante las comidas.</li>
+
+<li>No utilizar dispositivos antes de dormir.</li>
+
+<li>Fomentar la lectura de libros impresos.</li>
+
+<li>Realizar actividades al aire libre.</li>
+
+<li>Practicar deportes o juegos en familia.</li>
+
+<li>Incentivar actividades artísticas como dibujar, escribir o pintar.</li>
+
+<li>Conversar más tiempo con los niños y adolescentes.</li>
+
+</ul>
+
+</section>
+
+<section>
+
+<h2>La tecnología también tiene beneficios</h2>
+
+<p>
+
+La tecnología no es negativa por sí sola. Utilizada de forma responsable puede facilitar el acceso a la información, favorecer el aprendizaje, mejorar la comunicación y brindar nuevas oportunidades educativas. Lo importante es mantener un equilibrio entre el uso de dispositivos y otras actividades esenciales para el desarrollo integral de las personas.
+
+</p>
+
+</section>
+
+<section class="juego"><h2>¡Apaga las pantallas!</h2><div id="topos"></div></section>
+
+<section class="juego"><h2>Reto del día sin pantallas</h2><div id="reto-sem"></div></section>
+
+<section class="frase">
+
+<h2>Reflexión</h2>
+
+<p>
+
+"La mejor conexión no siempre es a Internet; muchas veces es compartir un libro, una conversación o un momento en familia."
+
+</p>
+
+</section>
+
+<section>
+
+<h2>Conclusión</h2>
+
+<p>
+
+El uso responsable de las pantallas permite aprovechar las ventajas de la tecnología sin dejar de lado actividades fundamentales como leer, escribir, jugar y convivir con otras personas. Promover hábitos saludables desde la infancia contribuye al bienestar físico, emocional e intelectual de toda la sociedad.
+
+</p>
+
+</section>
+
+</main>
+
+<footer>
+
+<p>
+
+© 2026 | Portal de Concientización sobre la Escritura, la Lectura y el Uso Responsable de la Tecnología.
+
+</p>
+
+</footer>
+
+<script>
+const $=s=>document.querySelector(s);
+const mezclar=a=>[...a].sort(()=>Math.random()-.5);
+function boom(){for(let i=0;i<30;i++){const s=document.createElement('span');s.className='conf';s.textContent=['🎉','⭐','✨','🎈'][i%4];s.style.left=Math.random()*100+'vw';s.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),2600)}}
+
+function memoria(){
+ const b=$('#memoria');if(!b)return;
+ const P=[['📚','libro'],['📖','cuento'],['🏛️','biblioteca'],['✏️','lápiz'],['✉️','carta'],['🎭','teatro']];
+ function ini(){
+  let a=null,mov=0,ok=0,lock=false;
+  const cs=mezclar(P.flatMap((p,i)=>[{i,t:p[0],e:1},{i,t:p[1]}]));
+  b.innerHTML=`<div class="hud"><span class="pill">👣 Jugadas: <b id="mv">0</b></span><button class="btn" id="rm" style="margin:0">🔄 Reiniciar</button></div><div class="mem">${cs.map(c=>`<button class="carta"><div><span class="f">❓</span><span class="b ${c.e?'em':''}">${c.t}</span></div></button>`).join('')}</div><p class="msg" id="mm">Une cada dibujo con su palabra 🧠</p>`;
+  $('#rm').onclick=ini;
+  b.querySelectorAll('.carta').forEach((el,k)=>el.onclick=()=>{
+   if(lock||el.classList.contains('v'))return;
+   el.classList.add('v');
+   if(!a){a=[el,cs[k]];return}
+   mov++;$('#mv').textContent=mov;
+   if(a[1].i==cs[k].i){el.classList.add('ok');a[0].classList.add('ok');a=null;if(++ok==P.length){boom();$('#mm').textContent='🏆 ¡Lo lograste en '+mov+' jugadas!'}}
+   else{lock=true;setTimeout(()=>{el.classList.remove('v');a[0].classList.remove('v');a=null;lock=false},900)}
+  });
+ }
+ ini();
+}
+
+function deletrea(){
+ const b=$('#deletrea');if(!b)return;
+ const W=[['🐶','PERRO'],['📚','LIBRO'],['🌙','LUNA'],['⚽','PELOTA'],['🌳','ARBOL'],['🐱','GATO'],['🦋','MARIPOSA']];
+ let n=0,pts=0;
+ function ver(){
+  const [e,w]=W[n%W.length];let k=0;
+  b.innerHTML=`<div class="hud"><span class="pill">⭐ Puntos: <b>${pts}</b></span></div><div class="gigante">${e}</div><div class="slots">${[...w].map(()=>'<span class="slot"></span>').join('')}</div><div class="burbujas">${mezclar([...w]).map((l,i)=>`<button class="burb" style="background:hsl(${i*53%360} 75% 50%)">${l}</button>`).join('')}</div><p class="msg" id="dm">¿Cómo se escribe? Toca las letras en orden 👆</p>`;
+  const sl=b.querySelectorAll('.slot');
+  b.querySelectorAll('.burb').forEach(x=>x.onclick=()=>{
+   if(x.textContent==w[k]){sl[k].textContent=w[k];sl[k].classList.add('pop');x.classList.add('gone');x.disabled=true;k++;
+    if(k==w.length){pts+=10;boom();$('#dm').textContent='🎉 ¡'+w+'! Muy bien';n++;setTimeout(ver,1800)}}
+   else{x.classList.add('mal');setTimeout(()=>x.classList.remove('mal'),400)}
+  });
+ }
+ ver();
+}
+
+function dado(){
+ const b=$('#dado');if(!b)return;
+ const W=['dragón','biblioteca','lluvia','globo','secreto','robot','isla','mariposa','tesoro','luna','bicicleta','montaña','pirata','cohete'];
+ b.innerHTML=`<div class="dados"><span class="dado">🎲</span><span class="dado">🎲</span><span class="dado">🎲</span></div><div style="text-align:center"><button class="btn" id="tira">🎲 ¡Tirar los dados!</button></div><p style="margin-top:14px">Escribe una historia con las 3 palabras:</p><textarea id="hist" rows="5" placeholder="Había una vez..."></textarea><p class="msg" id="cnt">0 palabras</p>`;
+ $('#tira').onclick=()=>{let c=0;const ds=b.querySelectorAll('.dado');
+  const iv=setInterval(()=>{ds.forEach(d=>d.textContent=W[Math.floor(Math.random()*W.length)]);if(++c>10){clearInterval(iv);ds.forEach(d=>d.classList.add('pop'));setTimeout(()=>ds.forEach(d=>d.classList.remove('pop')),400)}},90)};
+ $('#hist').oninput=e=>{const n=e.target.value.trim().split(/\s+/).filter(Boolean).length;
+  $('#cnt').textContent=n+(n==1?' palabra':' palabras')+(n>=30?' 🌟 ¡Gran historia!':'')};
+}
+
+function topos(){
+ const b=$('#topos');if(!b)return;
+ b.innerHTML=`<div class="hud"><span class="pill">⏱️ <b id="t">30</b>s</span><span class="pill">⭐ <b id="p">0</b></span><button class="btn" id="go" style="margin:0">▶ ¡Jugar!</button></div><div class="hoyos">${'<button class="hoyo"></button>'.repeat(9)}</div><p class="msg" id="tm">Apaga las pantallas 📱📺💻🎮 y no toques lo bueno 📖⚽🎨🌳</p>`;
+ const hs=[...b.querySelectorAll('.hoyo')],S=['📱','📺','💻','🎮'],G=['📖','⚽','🎨','🌳'];
+ let pts=0,t=0,on=false,iv,cr;
+ const fin=()=>{on=false;clearInterval(iv);clearInterval(cr);hs.forEach(h=>{h.textContent='';h.dataset.k=''});
+  $('#tm').textContent=pts>=100?'🏆 ¡Campeón de los libros! '+pts+' puntos':'Terminó: '+pts+' puntos. ¡Puedes superarlo!';if(pts>=100)boom()};
+ hs.forEach(h=>h.onclick=()=>{
+  if(!on||!h.dataset.k)return;
+  if(h.dataset.k=='s'){pts+=10;h.textContent='💤'}
+  else{pts=Math.max(0,pts-5);h.textContent='😢';h.classList.add('mal');setTimeout(()=>h.classList.remove('mal'),400)}
+  h.dataset.k='';$('#p').textContent=pts});
+ $('#go').onclick=()=>{
+  if(on)return;on=true;pts=0;t=30;$('#p').textContent=0;$('#t').textContent=t;$('#tm').textContent='¡Rápido!';
+  cr=setInterval(()=>{$('#t').textContent=--t;if(t<=0)fin()},1000);
+  iv=setInterval(()=>{
+   const l=hs.filter(h=>!h.dataset.k);if(!l.length)return;
+   const h=l[Math.floor(Math.random()*l.length)],s=Math.random()<.65;
+   h.dataset.k=s?'s':'g';h.textContent=(s?S:G)[Math.floor(Math.random()*4)];
+   h.classList.remove('up');void h.offsetWidth;h.classList.add('up');
+   const id=h.dataset.k;setTimeout(()=>{if(h.dataset.k==id&&on){h.dataset.k='';h.textContent=''}},1000)},650);
+ };
+}
+
+function reto(){
+ const b=$('#reto-sem');if(!b)return;
+ const A=['📖 Leí un libro impreso','⚽ Jugué al aire libre','🍽️ Cené sin pantallas','🎨 Dibujé o escribí en un cuaderno','💬 Conversé con mi familia','😴 Dormí sin celular'];
+ b.innerHTML=`<p>Marca lo que hiciste hoy sin pantallas:</p>`+A.map(t=>`<label class="check"><input type="checkbox">${t}</label>`).join('')+`<div class="barra"><div id="prog"></div></div><p class="msg" id="pm"></p>`;
+ const act=()=>{const c=b.querySelectorAll('input:checked').length;
+  $('#prog').style.width=c/A.length*100+'%';
+  $('#pm').textContent=c==A.length?'🏆 ¡Día desconectado completado!':c+' de '+A.length+' logros';if(c==A.length)boom()};
+ b.querySelectorAll('input').forEach(x=>x.onchange=act);act();
+}
+document.addEventListener('DOMContentLoaded',()=>{memoria();deletrea();dado();topos();reto()});
+</script>
+
+</body>
+</html>
